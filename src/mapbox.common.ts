@@ -113,6 +113,26 @@ export interface AddPolylineOptions {
   points: LatLng[];
 }
 
+export interface AddGeoJsonPolylineOptions {
+  /**
+   * Set this in case you want to later pass it to 'removePolylines'. Will override any id in GeoJson data
+   */
+  id?: any;
+  /**
+   * Width of the line, default 5.
+   */
+  width?: number;
+  /**
+   * Color of the line, default black.
+   */
+  color?: string | Color;
+  /**
+   * Transparency / alpha, ranging from 0 to 1.
+   * Default fully opaque (1).
+   */
+  opacity?: number;
+}
+
 export interface MapboxMarker extends LatLng {
   /**
    * Set this in case you want to later pass it to 'removeMarker'.
@@ -442,6 +462,8 @@ export interface MapboxApi {
 
   addPolyline(options: AddPolylineOptions, nativeMap?: any): Promise<any>;
 
+  addGeoJsonPolyline(geoJson: Object, options: AddGeoJsonPolylineOptions, nativeMap?: any): Promise<any>;
+
   removePolylines(ids?: Array<any>, nativeMap?: any): Promise<any>;
 
   animateCamera(options: AnimateCameraOptions, nativeMap?: any): Promise<any>;
@@ -599,6 +621,8 @@ export interface MapboxViewApi {
 
   addPolyline(options: AddPolylineOptions): Promise<any>;
 
+  addGeoJsonPolyline(geoJson: Object, options: AddGeoJsonPolylineOptions): Promise<any>;
+
   removePolylines(ids?: Array<any>): Promise<any>;
 
   animateCamera(options: AnimateCameraOptions): Promise<any>;
@@ -713,6 +737,10 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
 
   addPolyline(options: AddPolylineOptions): Promise<any> {
     return this.mapbox.addPolyline(options, this.getNativeMapView());
+  }
+
+  addGeoJsonPolyline(geoJson: any, options: AddPolylineOptions): Promise<any> {
+    return this.mapbox.addGeoJsonPolyline(geoJson, options, this.getNativeMapView());
   }
 
   removePolylines(ids?: Array<any>): Promise<any> {

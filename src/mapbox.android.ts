@@ -15,6 +15,7 @@ import {
   AddPolygonOptions,
   AddGeoJsonPolygonOptions,
   AddPolylineOptions,
+  AddGeoJsonPolylineOptions,
   AddSourceOptions,
   AnimateCameraOptions,
   DeleteOfflineRegionOptions,
@@ -915,6 +916,12 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         console.log("Error in mapbox.addPolyline: " + ex);
         reject(ex);
       }
+    });
+  }
+
+  addGeoJsonPolyline(geoJsonData: any, options: AddGeoJsonPolylineOptions, nativeMap?): Promise<any> {
+    return new Promise((resolve, reject) => {
+      reject("addGeoJsonPolyline not implemented for Android yet!");
     });
   }
 

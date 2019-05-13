@@ -14,6 +14,7 @@ import {
   AddPolygonOptions,
   AddGeoJsonPolygonOptions,
   AddPolylineOptions,
+  AddGeoJsonPolylineOptions,
   AddSourceOptions,
   AnimateCameraOptions,
   DeleteOfflineRegionOptions,
@@ -581,18 +582,27 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return;
       }
 
-      const geoJSON = {
-        "type": "FeatureCollection",
-        "features": [
-          {
-            "id": JSON.stringify(polygonID),
-            "type": "Feature",
-            "properties": {
-            },
-            "geometry": geoJsonData.geometry
-          }
-        ]
-      };
+      let geoJSON = geoJsonData;
+
+      if( geoJSON.type != 'FeatureCollection' ) {
+        if( geoJsonData.geometry.type == 'GeometryCollection') {
+          reject("MapBox does not currently support GeometryCollections!': " + polylineID);
+          return;
+        }
+        
+        geoJSON = {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "id": JSON.stringify(polygonID),
+              "type": "Feature",
+              "properties": {
+              },
+              "geometry": geoJsonData.geometry
+            }
+          ]
+        }
+      }
 
       const geoDataStr = NSString.stringWithString(JSON.stringify(geoJSON));
       const geoData = geoDataStr.dataUsingEncoding(NSUTF8StringEncoding);
@@ -642,7 +652,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         reject("Remove the polyline with this id first with 'removePolylines': " + polylineID);
         return;
       }
-
+      
       const geoJSON = `{"type": "FeatureCollection", "features": [{"type": "Feature","properties": {},"geometry": {"type": "LineString", "coordinates": ${JSON.stringify(coordinateArray)}}}]}`;
       const geoDataStr = NSString.stringWithString(geoJSON);
       const geoData = geoDataStr.dataUsingEncoding(NSUTF8StringEncoding);
@@ -659,6 +669,60 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
       layer.lineOpacity = NSExpression.expressionForConstantValue(options.opacity === undefined ? 1 : options.opacity);
 
       theMap.style.addLayer(layer);
+      resolve();
+    });
+  }
+
+  addGeoJsonPolyline(geoJsonData: any, options: AddPolylineOptions, nativeMap?): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const theMap: MGLMapView = nativeMap || _mapbox.mapView;
+      
+      const polylineID = "polyline_" + (options.id || geoJsonData.id || new Date().getTime());
+
+      // this would otherwise crash the app
+      if (theMap.style.sourceWithIdentifier(polylineID)) {
+        reject("Remove the polyline with this id first with 'removePolylines': " + polylineID);
+        return;
+      }
+
+      let geoJSON = geoJsonData;
+
+      if( geoJSON.type != 'FeatureCollection' ) {
+        if( geoJsonData.geometry.type == 'GeometryCollection') {
+          reject("MapBox does not currently support GeometryCollections!': " + polylineID);
+          return;
+        }
+
+        geoJSON = {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "id": JSON.stringify(polylineID),
+              "type": "Feature",
+              "properties": {
+              },
+              "geometry": geoJsonData.geometry
+            }
+          ]
+        }
+      }
+
+      const geoDataStr = NSString.stringWithString(JSON.stringify(geoJSON));
+      const geoData = geoDataStr.dataUsingEncoding(NSUTF8StringEncoding);
+      const geoDataBase64Enc = geoData.base64EncodedStringWithOptions(0);
+
+      const geo = NSData.alloc().initWithBase64EncodedStringOptions(geoDataBase64Enc, null);
+      const shape = MGLShape.shapeWithDataEncodingError(geo, NSUTF8StringEncoding);
+      const source = MGLShapeSource.alloc().initWithIdentifierShapeOptions(polylineID, shape, null);
+      theMap.style.addSource(source);
+
+      const layer = MGLLineStyleLayer.alloc().initWithIdentifierSource(polylineID, source);
+      layer.lineColor = NSExpression.expressionForConstantValue(!options.color ? UIColor.blackColor : (options.color instanceof Color ? options.color.ios : new Color(options.color).ios));
+      layer.lineWidth = NSExpression.expressionForConstantValue(options.width || 5);
+      layer.lineOpacity = NSExpression.expressionForConstantValue(options.opacity === undefined ? 1 : options.opacity);
+
+      theMap.style.addLayer(layer);
+     
       resolve();
     });
   }
