@@ -1046,7 +1046,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     });
   }
 
-  setOnScrollListener(listener: (data?: LatLng) => void, nativeMap?): Promise<void> {
+  setOnScrollListener(listener: (data?: any) => void, nativeMap?): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
         const theMap = nativeMap || _mapbox;
@@ -1062,10 +1062,16 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
               onMoveBegin: (detector: any /* MoveGestureDetector */) => {
               },
               onMove: (detector: any /* MoveGestureDetector */) => {
-                const coordinate = theMap.mapboxMap.getCameraPosition().target;
+                const bounds = theMap.mapboxMap.getProjection().getVisibleRegion().latLngBounds;
+          
                 listener({
-                  lat: coordinate.getLatitude(),
-                  lng: coordinate.getLongitude()
+                  bounds: {
+                    north: bounds.getLatNorth(),
+                    east: bounds.getLonEast(),
+                    south: bounds.getLatSouth(),
+                    west: bounds.getLonWest()
+                  },
+                  zoomLevel: theMap.mapboxMap.getCameraPosition().zoom
                 });
               },
               onMoveEnd: (detector: any /* MoveGestureDetector */) => {
@@ -1081,7 +1087,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     });
   }
 
-  setOnPinchListener(listener: (data?: LatLng) => void, nativeMap?): Promise<void> {
+  setOnPinchListener(listener: (data?: any) => void, nativeMap?): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
         const theMap = nativeMap || _mapbox;
@@ -1097,10 +1103,16 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
               onScaleBegin: (detector: any /* ScaleGestureDetector */) => {
               },
               onScale: (detector: any /* ScaleGestureDetector */) => {
-                const coordinate = theMap.mapboxMap.getCameraPosition().target;
+                const bounds = theMap.mapboxMap.getProjection().getVisibleRegion().latLngBounds;
+          
                 listener({
-                  lat: coordinate.getLatitude(),
-                  lng: coordinate.getLongitude()
+                  bounds: {
+                    north: bounds.getLatNorth(),
+                    east: bounds.getLonEast(),
+                    south: bounds.getLatSouth(),
+                    west: bounds.getLonWest()
+                  },
+                  zoomLevel: theMap.mapboxMap.getCameraPosition().zoom
                 });
               },
               onScaleEnd: (detector: any /* ScaleGestureDetector */) => {

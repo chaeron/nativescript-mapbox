@@ -421,9 +421,9 @@ export interface MapboxApi {
 
   setOnMapLongClickListener(listener: (data: LatLng) => void, nativeMap?): Promise<any>;
 
-  setOnScrollListener(listener: (data?: LatLng) => void, nativeMap?: any): Promise<void>;
+  setOnScrollListener(listener: (data?: any) => void, nativeMap?: any): Promise<void>;
 
-  setOnPinchListener(listener: (data?: LatLng) => void, nativeMap?: any): Promise<void>;
+  setOnPinchListener(listener: (data?: any) => void, nativeMap?: any): Promise<void>;
 
   setOnFlingListener(listener: () => void, nativeMap?: any): Promise<any>;
 
@@ -526,9 +526,9 @@ export interface MapboxViewApi {
 
   setOnMapLongClickListener(listener: (data: LatLng) => void): Promise<any>;
 
-  setOnScrollListener(listener: (data?: LatLng) => void): Promise<void>;
+  setOnScrollListener(listener: (data?: any) => void): Promise<void>;
 
-  setOnPinchListener(listener: (data?: LatLng) => void): Promise<void>;
+  setOnPinchListener(listener: (data?: any) => void): Promise<void>;
 
   setOnFlingListener(listener: () => void): Promise<any>;
 
@@ -596,11 +596,11 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
     return this.mapbox.setOnMapLongClickListener(listener, this.getNativeMapView());
   }
 
-  setOnScrollListener(listener: (data?: LatLng) => void, nativeMap?: any): Promise<void> {
+  setOnScrollListener(listener: (data?: any) => void, nativeMap?: any): Promise<void> {
     return this.mapbox.setOnScrollListener(listener, this.getNativeMapView());
   }
 
-  setOnPinchListener(listener: (data?: LatLng) => void, nativeMap?: any): Promise<void> {
+  setOnPinchListener(listener: (data?: any) => void, nativeMap?: any): Promise<void> {
     return this.mapbox.setOnPinchListener(listener, this.getNativeMapView());
   }
 

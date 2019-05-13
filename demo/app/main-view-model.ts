@@ -58,8 +58,12 @@ export class HelloWorldModel extends Observable {
 
           this.mapbox.setOnMapLongClickListener(point => console.log(`>> Map longpressed: ${JSON.stringify(point)}`));
 
-          this.mapbox.setOnScrollListener((point: LatLng) => {
-            // console.log(`>> Map scrolled: ${JSON.stringify(point)}`);
+          this.mapbox.setOnScrollListener((viewport: any) => {
+            // console.log(`>> Map scrolled: ${JSON.stringify(viewport)}`);
+          });
+
+          this.mapbox.setOnPinchListener((viewport: any) => {
+            // console.log(`>> Map pinched: ${JSON.stringify(viewport)}`);
           });
 
           this.mapbox.setOnFlingListener(() => {

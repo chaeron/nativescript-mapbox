@@ -32,7 +32,10 @@ function onMapReady(args) {
   map.setOnMapLongClickListener((point: LatLng) => console.log(`Map longpressed: ${JSON.stringify(point)}`));
 
   // this works perfectly fine, but generates a lot of noise
-  // map.setOnScrollListener((point?: LatLng) => console.log(`Map scrolled: ${JSON.stringify(point)}`));
+  // map.setOnScrollListener((viewport?: any) => console.log(`Map scrolled: ${JSON.stringify(viewport)}`));
+
+  // this works perfectly fine, but generates a lot of noise
+  // map.setOnPinchListener((viewport?: any) => console.log(`Map scrolled: ${JSON.stringify(viewport)}`));
 
   // this allows json style loading for XYZ or TMS tiles source
   map.setMapStyle("~/OSM-map-style.json")

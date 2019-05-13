@@ -748,7 +748,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     });
   }
 
-  setOnScrollListener(listener: (data?: LatLng) => void, nativeMap?: any): Promise<void> {
+  setOnScrollListener(listener: (data?: any) => void, nativeMap?: any): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
         let theMap: MGLMapView = nativeMap || _mapbox.mapView;
@@ -778,7 +778,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     });
   }
 
-  setOnPinchListener(listener: (data?: LatLng) => void, nativeMap?: any): Promise<void> {
+  setOnPinchListener(listener: (data?: any) => void, nativeMap?: any): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
         let theMap: MGLMapView = nativeMap || _mapbox.mapView;
@@ -1581,7 +1581,7 @@ class MapLongPressHandlerImpl extends NSObject {
 
 class MapPanHandlerImpl extends NSObject {
   private _owner: WeakRef<Mapbox>;
-  private _listener: (data?: LatLng) => void;
+  private _listener: (data?: any) => void;
   private _mapView: MGLMapView;
 
   public static initWithOwnerAndListenerForMap(owner: WeakRef<Mapbox>, listener: (data?: LatLng) => void, mapView: MGLMapView): MapPanHandlerImpl {
@@ -1593,11 +1593,16 @@ class MapPanHandlerImpl extends NSObject {
   }
 
   public pan(recognizer: UIPanGestureRecognizer): void {
-    const panPoint = recognizer.locationInView(this._mapView);
-    const panCoordinate = this._mapView.convertPointToCoordinateFromView(panPoint, this._mapView);
+    let visibleBounds = this._mapView.visibleCoordinateBounds;
+    let bounds = {
+      north: visibleBounds.ne.latitude,
+      east:  visibleBounds.ne.longitude,
+      south: visibleBounds.sw.latitude,
+      west:  visibleBounds.sw.longitude
+    };
     this._listener({
-      lat: panCoordinate.latitude,
-      lng: panCoordinate.longitude
+      bounds: bounds,
+      zoomLevel: this._mapView.zoomLevel
     });
   }
 
@@ -1608,7 +1613,7 @@ class MapPanHandlerImpl extends NSObject {
 
 class MapPinchHandlerImpl extends NSObject {
   private _owner: WeakRef<Mapbox>;
-  private _listener: (data?: LatLng) => void;
+  private _listener: (data?: any) => void;
   private _mapView: MGLMapView;
 
   public static initWithOwnerAndListenerForMap(owner: WeakRef<Mapbox>, listener: (data?: LatLng) => void, mapView: MGLMapView): MapPinchHandlerImpl {
@@ -1620,11 +1625,16 @@ class MapPinchHandlerImpl extends NSObject {
   }
 
   public pinch(recognizer: UIPinchGestureRecognizer): void {
-    const pinchPoint = recognizer.locationInView(this._mapView);
-    const pinchCoordinate = this._mapView.convertPointToCoordinateFromView(pinchPoint, this._mapView);
+    let visibleBounds = this._mapView.visibleCoordinateBounds;
+    let bounds = {
+      north: visibleBounds.ne.latitude,
+      east:  visibleBounds.ne.longitude,
+      south: visibleBounds.sw.latitude,
+      west:  visibleBounds.sw.longitude
+    };
     this._listener({
-      lat: pinchCoordinate.latitude,
-      lng: pinchCoordinate.longitude
+      bounds: bounds,
+      zoomLevel: this._mapView.zoomLevel
     });
   }
 

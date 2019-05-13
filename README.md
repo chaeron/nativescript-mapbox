@@ -622,20 +622,20 @@ Add a listener to retrieve lat and lng of where the user longpresses the map (no
 ```
 
 ### setOnScrollListener
-Add a listener to retrieve lat and lng of where the user scrolls to on the map.
+Add a listener to retrieve viewport of where the user scrolls to on the map. The result returned is same as for getViewport()
 
 ```typescript
-  mapbox.setOnScrollListener((point?: LatLng) => {
-    console.log("Map scrolled to latitude: " + point.lat + ", longitude: " + point.lng);
+  mapbox.setOnScrollListener((viewport?: any) => {
+    console.log("Map scrolled to viewport: " + JSON.stringify( viewport ));
   });
 ```
 
 ### setOnPinchListener
-Add a listener to retrieve lat and lng of where the user pinches to on the map.
+Add a listener to retrieve viewport of where the user pinches to on the map. The result returned is same as for getViewport()
 
 ```typescript
-  mapbox.setOnPinchListener((point?: LatLng) => {
-    console.log("Map pinched to latitude: " + point.lat + ", longitude: " + point.lng);
+  mapbox.setOnPinchListener(((viewport?: any) => {
+    console.log("Map pinched to viewport: " + JSON.stringify( viewport ));
   });
 ```
 
