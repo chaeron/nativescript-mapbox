@@ -56,6 +56,33 @@ export interface AddPolygonOptions {
   strokeOpacity?: number;
 }
 
+
+export interface AddGeoJsonPolygonOptions {
+  /**
+   * Set this in case you want to later pass it to 'removePolygons'. TODO doesn't exist yet ;) Will override any id in GeoJson data
+   */
+  id?: any;
+  fillColor?: string | Color;
+  /**
+   * Transparency / alpha, ranging from 0 to 1.
+   * Default fully opaque (1).
+   */
+  fillOpacity?: number;
+
+  /**
+   * The line around the polygon. Barely visible on Android.
+   */
+  strokeColor?: string | Color;
+  /**
+   * iOS only.
+   */
+  strokeWidth?: number;
+  /**
+   * iOS only.
+   */
+  strokeOpacity?: number;
+}
+
 export interface UserLocation {
   location: LatLng;
   speed: number;
@@ -408,6 +435,8 @@ export interface MapboxApi {
   queryRenderedFeatures(options: QueryRenderedFeaturesOptions, nativeMap?: any): Promise<Array<Feature>>;
 
   addPolygon(options: AddPolygonOptions, nativeMap?: any): Promise<any>;
+  
+  addGeoJsonPolygon(geoJson: Object, options: AddGeoJsonPolygonOptions, nativeMap?: any): Promise<any>;
 
   removePolygons(ids?: Array<any>, nativeMap?: any): Promise<any>;
 
@@ -564,6 +593,8 @@ export interface MapboxViewApi {
 
   addPolygon(options: AddPolygonOptions): Promise<any>;
 
+  addGeoJsonPolygon(geoJson: any, options: AddGeoJsonPolygonOptions): Promise<any>;
+
   removePolygons(ids?: Array<any>): Promise<any>;
 
   addPolyline(options: AddPolylineOptions): Promise<any>;
@@ -670,6 +701,10 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
 
   addPolygon(options: AddPolygonOptions): Promise<any> {
     return this.mapbox.addPolygon(options, this.getNativeMapView());
+  }
+
+  addGeoJsonPolygon(geoJson: any, options: AddGeoJsonPolygonOptions): Promise<any> {
+    return this.mapbox.addGeoJsonPolygon(geoJson, options, this.getNativeMapView());
   }
 
   removePolygons(ids?: Array<any>): Promise<any> {

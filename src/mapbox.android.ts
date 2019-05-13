@@ -13,6 +13,7 @@ import {
   AddGeoJsonClusteredOptions,
   AddLayerOptions,
   AddPolygonOptions,
+  AddGeoJsonPolygonOptions,
   AddPolylineOptions,
   AddSourceOptions,
   AnimateCameraOptions,
@@ -878,6 +879,12 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         console.log("Error in mapbox.addPolygon: " + ex);
         reject(ex);
       }
+    });
+  }
+
+  addGeoJsonPolygon(geoJsonData: any, options: AddGeoJsonPolygonOptions, nativeMap?): Promise<any> {
+    return new Promise((resolve, reject) => {
+      reject("addGeoJsonPolygon not implemented for Android yet!");
     });
   }
 
