@@ -511,6 +511,27 @@ The first person to tweet a snowman drawn with this function gets a T-shirt.
       .catch((error: string) => console.log("mapbox addPolygon error: " + error));
 ```
 
+### addGeoJsonPolygon
+Draw a polygon specified as a GeoJSON object.  Holes are rendered correctly.
+
+
+```typescript
+  mapbox.addGeoJsonPolygon(
+      myGeoJson,
+      {
+        id: 1, // optional, can be used in 'removePolygons'
+        fillColor: new Color("red"),
+        fillOpacity: 0.7,
+
+        // stroke-related properties are only effective on iOS
+        strokeColor: new Color("green"),
+        strokeWidth: 8,
+        strokeOpacity: 0.5
+      })
+      .then(result => console.log("Mapbox addGeoJsonPolygon done"))
+      .catch((error: string) => console.log("mapbox addGeoJsonPolygon error: " + error));
+```
+
 ### removePolygons
 You can either remove all polygons by not passing in an argument,
 or remove specific polygon id's (which you specified previously).
@@ -547,6 +568,20 @@ Draw a polyline. Connect the points given as parameters.
               'lng': 4.8991980
           }
       ]
+  });
+```
+
+### addGeoJsonPolyline
+Draw a polyline specified as a GeoJSON object. 
+
+```js
+  mapbox.addGeoJsonPolyline(
+    myGeoJson,
+    {
+      id: 1, // optional, can be used in 'removePolylines'
+      color: '#336699', // Set the color of the line (default black)
+      width: 7, // Set the width of the line (default 5)
+      opacity: 0.6, //Transparency / alpha, ranging 0-1. Default fully opaque (1)
   });
 ```
 
