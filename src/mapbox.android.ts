@@ -1081,6 +1081,41 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     });
   }
 
+  setOnPinchListener(listener: (data?: LatLng) => void, nativeMap?): Promise<void> {
+    return new Promise((resolve, reject) => {
+      try {
+        const theMap = nativeMap || _mapbox;
+
+        if (!theMap) {
+          reject("No map has been loaded");
+          return;
+        }
+
+        // the 'onScale' event seems like the one closest to the iOS implementation
+        theMap.mapboxMap.addOnMoveListener(
+            new com.mapbox.mapboxsdk.maps.MapboxMap.OnScaleListener({
+              onScaleBegin: (detector: any /* ScaleGestureDetector */) => {
+              },
+              onScale: (detector: any /* ScaleGestureDetector */) => {
+                const coordinate = theMap.mapboxMap.getCameraPosition().target;
+                listener({
+                  lat: coordinate.getLatitude(),
+                  lng: coordinate.getLongitude()
+                });
+              },
+              onScaleEnd: (detector: any /* ScaleGestureDetector */) => {
+              }
+            })
+        );
+
+        resolve();
+      } catch (ex) {
+        console.log("Error in mapbox.setOnPinchListener: " + ex);
+        reject(ex);
+      }
+    });
+  }
+
   setOnFlingListener(listener: () => void, nativeMap?): Promise<any> {
     return new Promise((resolve, reject) => {
       try {

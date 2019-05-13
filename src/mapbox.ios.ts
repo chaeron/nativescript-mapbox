@@ -778,6 +778,36 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     });
   }
 
+  setOnPinchListener(listener: (data?: LatLng) => void, nativeMap?: any): Promise<void> {
+    return new Promise((resolve, reject) => {
+      try {
+        let theMap: MGLMapView = nativeMap || _mapbox.mapView;
+
+        if (!theMap) {
+          reject("No map has been loaded");
+          return;
+        }
+
+        // adding the pinch handler to the map oject so it's not GC'd
+        theMap['mapPinchHandler'] = MapPinchHandlerImpl.initWithOwnerAndListenerForMap(new WeakRef(this), listener, theMap);
+
+        // there's already a pinch recognizer, so find it and attach a target action
+        for (let i = 0; i < theMap.gestureRecognizers.count; i++) {
+          let recognizer: UIGestureRecognizer = theMap.gestureRecognizers.objectAtIndex(i);
+          if (recognizer instanceof UIPinchGestureRecognizer) {
+            recognizer.addTargetAction(theMap['mapPinchHandler'], "pinch");
+            break;
+          }
+        }
+
+        resolve();
+      } catch (ex) {
+        console.log("Error in mapbox.setOnPinchListener: " + ex);
+        reject(ex);
+      }
+    });
+  }
+
   setOnFlingListener(listener: () => void, nativeMap?: any): Promise<any> {
     // there's no swipe event we can bind to
     return Promise.reject("'setOnFlingListener' is not supported on iOS");
@@ -1573,6 +1603,33 @@ class MapPanHandlerImpl extends NSObject {
 
   public static ObjCExposedMethods = {
     "pan": {returns: interop.types.void, params: [interop.types.id]}
+  };
+}
+
+class MapPinchHandlerImpl extends NSObject {
+  private _owner: WeakRef<Mapbox>;
+  private _listener: (data?: LatLng) => void;
+  private _mapView: MGLMapView;
+
+  public static initWithOwnerAndListenerForMap(owner: WeakRef<Mapbox>, listener: (data?: LatLng) => void, mapView: MGLMapView): MapPinchHandlerImpl {
+    let handler = <MapPinchHandlerImpl>MapPinchHandlerImpl.new();
+    handler._owner = owner;
+    handler._listener = listener;
+    handler._mapView = mapView;
+    return handler;
+  }
+
+  public pinch(recognizer: UIPinchGestureRecognizer): void {
+    const pinchPoint = recognizer.locationInView(this._mapView);
+    const pinchCoordinate = this._mapView.convertPointToCoordinateFromView(pinchPoint, this._mapView);
+    this._listener({
+      lat: pinchCoordinate.latitude,
+      lng: pinchCoordinate.longitude
+    });
+  }
+
+  public static ObjCExposedMethods = {
+    "pinch": {returns: interop.types.void, params: [interop.types.id]}
   };
 }
 

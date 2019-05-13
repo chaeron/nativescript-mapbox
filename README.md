@@ -630,6 +630,15 @@ Add a listener to retrieve lat and lng of where the user scrolls to on the map.
   });
 ```
 
+### setOnPinchListener
+Add a listener to retrieve lat and lng of where the user pinches to on the map.
+
+```typescript
+  mapbox.setOnPinchListener((point?: LatLng) => {
+    console.log("Map pinched to latitude: " + point.lat + ", longitude: " + point.lng);
+  });
+```
+
 ## Offline maps
 For situations where you want the user to pre-load certain regions you can use these methods to create and remove offline regions.
 
